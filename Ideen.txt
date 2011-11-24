@@ -1,0 +1,60 @@
+I. Waldbrand-Scenario:
+
+Projektnamen: Firerun I? Burning Woods?
+
+Spielprinzip:
+In einer Waldscene stehen einige Bäume in Flammen. Das Feuer kann zwischen Bäumen Springen und entwickelt sich daher zu einer ernstzunehmenden Gefahr. Ziel ist es so lang wie möglich am Leben zu bleiben. Das Motto dazu: LAUF!
+
+Steuerung:
+- Shootersteuerung
+- "Charakter" wird bis zur Maximalgrenze schneller
+- Kollisionen bremsen/stoppen Charakter
+
+Scene:
+- Bäume
+- Felsen
+- Hügel
+- Kontinuierlich (keine Ende so lange man lebt)
+- Nacht: Mondschein und Sternenhimmel
+- Boni:
+	* Resistenzwert erhöhen
+	* max. Geschwindigkeit
+	* Beschleunigung
+
+Highscore:
+- Überlebenszeit
+
+Technische Hürden/Umsetzungen:
+- Direct3D9 (geringe Einarbeiteitungszeit [Johannes & Andreas haben Vorkenntnisse], müsste für Anforderungen genügen)
+- möglichst viel D3DX-Nutzung
+- Kollision mit Kreisen approximiern
+- Rauch und Feuer rendern
+- Physik des Feuers:
+	* Bäume haben Grenzwert, wann sie entbrennen (Feuerresistenz),
+			Energieabgabe (Quadratische mit der Distanz)
+			Eigener Abgebewert wird von Volumenfaktor abgezogen -> Baum brennt ab
+	* Grenzwerte werden von Volumen ausgehend berechnet
+	* Beim brennen: Blätter auspixeln, Bäume werden schwarz
+	* Sterbebedingung: Resistenzwert -> man Brennt wie die Bäume
+- HDR
+- Feuer hat Punklichtquellen
+ ~> Deferred Shading
+- Kontinuierliches Terrain aus Höhenkarte(n?) (Fraktal, Perlin Noise)
+- 
+
+
+- Weltmanagment:
+	- Bäume haben Flags um ihren physikalischen und ihren Verwaltungszustand zu speichern
+	- World hat 3 Listen (brennende Bäume; nicht brennende; abgebrannte); jeder Baum ist in genau einer der drei Listen
+	- Jeder brennende Baum hat eine Liste mit Bäumen, die er beeinflusst
+	- beginnt ein Baum mit brennen alle Bäume beider Scenen-Listen (brennend, nicht brennend) durchgehen und Nachbarn suchen
+	- für jeden Baum in brennender Liste führe Simulation aus
+		- ist dabei ein bereits abgebrannter Baum lösche ihn aus Nachbarschaft
+		- der Scenenmanager setzt Flags in Abgebrannten Bäumen -> Im nächsten Frame könnte der Baum freigegeben werden (wird nach abgebrannt verschoben)	
+	- Alle abgebrannten Bäume und Steine außerhalb eines Sichtradiuses können bedenkenlos gelöscht werden
+	- Beim durchlaufen der Listen Steine+Bäume (außer abgebrannte) bounding Quad der Scene bestimmen.
+	- Wenn Sichtradius bounding Quad überlagert nachladen
+	
+- dot-product-culling
+	- "Winkel" zwischen Sichtrichtung und Position-Modell wird geprüft
+	- ist der Winkel zu groß -> culling

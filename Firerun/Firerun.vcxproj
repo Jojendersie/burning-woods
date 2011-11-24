@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5F2AFBFF-0894-467F-A0F3-F5BA12CBE3F1}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Firerun</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="propsheet debug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="propsheet release.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)\include\;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)\src\;$(SourcePath)</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)\include\;$(IncludePath)</IncludePath>
+    <SourcePath>$(SolutionDir)\src\;$(IncludePath)</SourcePath>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(ProjectDir)$(ProjectName)\$(TargetName)_d$(TargetExt)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cmd /c "$(ProjectDir)Debug\ShaderAutoCompile.exe"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <StringPooling>true</StringPooling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <FunctionOrder>
+      </FunctionOrder>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>
+      </LargeAddressAware>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(ProjectDir)$(ProjectName)\$(TargetName)$(TargetExt)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cmd /c "$(ProjectDir)Release\ShaderAutoCompile.exe"</Command>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>copy "$(TargetPath)" "$(ProjectDir)$(ProjectName)\$(TargetName)$(TargetExt)"</Command>
+      <Outputs>Shader.h</Outputs>
+    </CustomBuild>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Fire.cpp" />
+    <ClCompile Include="src\Firerun.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Stone.cpp" />
+    <ClCompile Include="src\Texturemanager.cpp" />
+    <ClCompile Include="src\Tree.cpp" />
+    <ClCompile Include="src\World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Fire.h" />
+    <ClInclude Include="include\FireParticleSystem.h" />
+    <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\Stone.h" />
+    <ClInclude Include="include\Texturemanager.h" />
+    <ClInclude Include="include\Renderer.h" />
+    <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\Tree.h" />
+    <ClInclude Include="include\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shader ASM\terrain.psh">
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Shader.h;%(Outputs)</Outputs>
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\terrain.vsh">
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\DeferredDirLight.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\ScreenQuadWithRays.vsh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\BrightPass.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\GaussianBlur.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_downsample.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_intial.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_last.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\ToneMappingFinish.psh">
+      <FileType>Document</FileType>
+    </EmbeddedResource>
+    <None Include="Shader ASM\DeferredPointLight.psh" />
+    <None Include="Shader ASM\fire.psh" />
+    <None Include="Shader ASM\fire.vsh" />
+    <None Include="Shader ASM\Sky.psh" />
+    <None Include="Shader ASM\Sky.vsh" />
+    <None Include="Shader ASM\Stone.psh" />
+    <None Include="Shader ASM\Stone.vsh" />
+    <None Include="Shader HLSL\Deferred Light.hlsl" />
+    <None Include="Shader HLSL\FireParticles.hlsl" />
+    <None Include="Shader HLSL\HDR.hlsl" />
+    <None Include="Shader HLSL\Sky.hlsl" />
+    <None Include="Shader HLSL\Stone.hlsl" />
+    <None Include="Shader HLSL\Terrain.hlsl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

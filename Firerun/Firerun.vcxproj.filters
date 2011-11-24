@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shader HLSL">
+      <UniqueIdentifier>{23895bc3-7b1c-4403-9267-d572a112d4cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader ASM">
+      <UniqueIdentifier>{3cef4c06-92d5-4b68-a34f-a6a8d874d19f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Firerun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texturemanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Stone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Fire.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Texturemanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\World.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Stone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FireParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Fire.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader HLSL\Terrain.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader HLSL\Deferred Light.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader HLSL\HDR.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader HLSL\Stone.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader ASM\Stone.psh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader ASM\Stone.vsh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader HLSL\Sky.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader ASM\Sky.psh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader ASM\Sky.vsh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader ASM\DeferredPointLight.psh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader HLSL\FireParticles.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader ASM\fire.psh">
+      <Filter>Shader ASM</Filter>
+    </None>
+    <None Include="Shader ASM\fire.vsh">
+      <Filter>Shader ASM</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Shader ASM\terrain.vsh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\terrain.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\ScreenQuadWithRays.vsh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_last.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_intial.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\luminance_downsample.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\GaussianBlur.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\DeferredDirLight.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\BrightPass.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Shader ASM\ToneMappingFinish.psh">
+      <Filter>Shader ASM</Filter>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

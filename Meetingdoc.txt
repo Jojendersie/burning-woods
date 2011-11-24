@@ -1,0 +1,25 @@
+08.02.2011
+- Beschlüsse zum Renderer
+- Instancing besprochen, wird eingeführt falls nötig (Hardware- oder Shader- Instancing)
+- Optionales Feature: Gras
+- Nachbesserungen bei allgemeiner Struktur
+- Beschluss von Codenconventions
+
+02.02.2011
+- Terrain-Umsetzung:
+	- planarer Kegelmesh mit reduziertem Detailwert zum Horizont (wird nach der Kamera initialisiert um das FOV abzudecken)
+	- Vertexshader ca. 70 Instruktionen berechnet die Höhe mit Perlin-Noise
+	- identischer Code für Prozessor benötigt zum Setzen von Bäumen und für die physik
+	- Texturierung: Wiese/Wald und Fels (je 1 oder 2?)
+		- Steigung gewichtet im Pixelshader wählt die Textur
+		- Planare Kachelung
+
+- Noise: Zufallsvektor (in Konstantenregister/für Prozessor)
+	-> Standard Perlin-Noise
+
+- Feature:
+	- Gravitation: mit sehr kleinem Wert -> "Sprung" über Abhänge (leichte Flugphase) -> keine Kontrolle während Flug
+
+
+26.01.2011
+- Strukturplanung, alle Entscheidungen im Struktur.graphml

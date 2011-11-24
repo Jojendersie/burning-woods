@@ -1,0 +1,10 @@
+
+*.sdf
+*.suo
+*.svn
+*.user
+*.props
+*.exe
+/Firerun/Debug
+/Firerun/Release
+/Firerun/ipch
