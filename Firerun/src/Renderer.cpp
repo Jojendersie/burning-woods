@@ -183,29 +183,25 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 	}
 
 	// universal Quad vb
-	m_pD3DDevice->CreateVertexBuffer(sizeof(TexturedQuadVertex)*4, D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &m_pTexturedQuadVB, NULL);
-	TexturedQuadVertex* vertices;
-	m_pTexturedQuadVB->Lock(0, sizeof(TexturedQuadVertex)*4, (void**)&vertices, D3DLOCK_DISCARD);
-	vertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	vertices[1].position = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
-	vertices[2].position = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
-	vertices[3].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_pD3DDevice->CreateVertexBuffer(sizeof(BillboardVertex)*4, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, 0, D3DPOOL_DEFAULT, &m_pBillboardVB, NULL);
+	BillboardVertex* vertices;
+	m_pBillboardVB->Lock(0, sizeof(BillboardVertex)*4, (void**)&vertices, D3DLOCK_DISCARD);
 	vertices[0].texcoord = D3DXVECTOR2(0.0f, 0.0f);
 	vertices[1].texcoord = D3DXVECTOR2(1.0f, 0.0f);
 	vertices[2].texcoord = D3DXVECTOR2(1.0f, 1.0f);
-	vertices[3].texcoord = D3DXVECTOR2(0.0f, 1.0f);
-	m_pTexturedQuadVB->Unlock();
+	vertices[3].texcoord = D3DXVECTOR2(0.0f, 1.0f);	// positions are updated framewise
+	m_pBillboardVB->Unlock();
 
-	m_pD3DDevice->CreateIndexBuffer(sizeof(WORD)*6, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_pTexturedQuadIB, NULL);
+	m_pD3DDevice->CreateIndexBuffer(sizeof(WORD)*6, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_pBillboardIB, NULL);
 	WORD* indices;
-	m_pTexturedQuadIB->Lock(0, sizeof(WORD)*6, (void**)&indices, D3DLOCK_DISCARD);
+	m_pBillboardIB->Lock(0, sizeof(WORD)*6, (void**)&indices, D3DLOCK_DISCARD);
 	indices[0] = 0;
 	indices[1] = 1;
 	indices[2] = 3;
 	indices[3] = 1;
 	indices[4] = 2;
 	indices[5] = 3;
-	m_pTexturedQuadVB->Unlock();
+	m_pBillboardVB->Unlock();
 
 	// fire
 	m_pD3DDevice->CreateVertexDeclaration(Fire::FireVertexDeclElements, &Fire::pVertexDecl);
@@ -226,8 +222,8 @@ Renderer::~Renderer()
 	// OPT - remove release calls
 	Fire::pVertexDecl->Release();
 
-	m_pTexturedQuadVB->Release();
-	m_pTexturedQuadIB->Release();
+	m_pBillboardVB->Release();
+	m_pBillboardIB->Release();
 
 	m_pFirePS->Release();
 	m_pFireVS->Release();
@@ -281,6 +277,17 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	D3DXVECTOR2 CameraDir2D(CameraDir.x,CameraDir.z);
 	D3DXVec2Normalize(&CameraDir2D, &CameraDir2D);
 
+
+	// make billboard billboardlike ;)
+	BillboardVertex* vertices;
+	m_pBillboardVB->Lock(0, sizeof(BillboardVertex)*4, (void**)&vertices, D3DLOCK_DISCARD);
+	D3DXVECTOR3 cameraX(ViewMatrix._11, ViewMatrix._21, ViewMatrix._31);
+	D3DXVECTOR3 cameraY(ViewMatrix._12, ViewMatrix._22, ViewMatrix._32);
+	vertices[0].position = -cameraX-cameraY;
+	vertices[1].position = +cameraX-cameraY;
+	vertices[2].position = +cameraX+cameraY;
+	vertices[3].position = -cameraX+cameraY;
+	m_pBillboardVB->Unlock();
 
 
 	// Begin Szene
@@ -470,10 +477,10 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	//m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-	m_pD3DDevice->SetStreamSource(0, m_pTexturedQuadVB, 0, sizeof(TexturedQuadVertex));
+	m_pD3DDevice->SetStreamSource(0, m_pBillboardVB, 0, sizeof(BillboardVertex));
     m_pD3DDevice->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | NUM_PARTICLES_PER_FIRE);
 
-	m_pD3DDevice->SetIndices(m_pTexturedQuadIB);
+	m_pD3DDevice->SetIndices(m_pBillboardIB);
 
 	m_pD3DDevice->SetPixelShader(m_pFirePS);
 	m_pD3DDevice->SetVertexShader(m_pFireVS);

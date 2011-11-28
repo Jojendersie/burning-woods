@@ -111,13 +111,13 @@ private:
 	IDirect3DVertexShader9*	m_pFireVS;
 
 	// universal textured quad
-	struct TexturedQuadVertex
+	struct BillboardVertex
 	{
 		D3DXVECTOR3 position;
 		D3DXVECTOR2 texcoord;
 	};
-	IDirect3DVertexBuffer9* m_pTexturedQuadVB;
-	IDirect3DIndexBuffer9*  m_pTexturedQuadIB;
+	IDirect3DVertexBuffer9* m_pBillboardVB;
+	IDirect3DIndexBuffer9*  m_pBillboardIB;
 
 	// -----------------------------------
 	// Offsets, Weights and other Values
