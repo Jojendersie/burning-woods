@@ -18,6 +18,10 @@ public:
 	static const D3DVERTEXELEMENT9 FireVertexDeclElements[];
 	static IDirect3DVertexDeclaration9* pVertexDecl;	// created and destoryed by renderer
 
+	static const D3DXVECTOR4 fireStartColor;
+	static const D3DXVECTOR4 fireMidColor;
+	static const D3DXVECTOR4 fireEndColor;
+
 private:
 	struct Particle
 	{

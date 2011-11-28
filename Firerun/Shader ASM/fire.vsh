@@ -5,6 +5,9 @@
 //
 //   float PassedTime;
 //   float4x4 WorldViewProjection;
+//   float4 endColor;
+//   float4 midColor;
+//   float4 startColor;
 //
 //
 // Registers:
@@ -13,24 +16,40 @@
 //   ------------------- ----- ----
 //   WorldViewProjection c0       4
 //   PassedTime          c4       1
+//   startColor          c5       1
+//   midColor            c6       1
+//   endColor            c7       1
 //
 
     vs_3_0
-    def c5, 0, 10, 0, 0
+    def c8, 0, 15, 2, 1
+    def c9, 2, -1, 0, 0
     dcl_position v0
-    dcl_texcoord1 v1
-    dcl_texcoord2 v2
+    dcl_texcoord v1
+    dcl_texcoord1 v2
+    dcl_texcoord2 v3
     dcl_position o0
-    rcp r0.x, v2.x
-    mad r0.x, c4.x, r0.x, v2.y
+    dcl_color o1
+    dcl_texcoord o2.xy
+    rcp r0.x, v3.x
+    mad r0.x, c4.x, r0.x, v3.y
     frc r0.x, r0.x
-    mul r0.x, r0.x, v2.x
-    mul r0.yzw, r0.x, c5.xxyx
-    mad r0.xyz, v1, r0.x, r0.yzww
+    mad r0.y, r0.x, -c8.z, c8.w
+    max r0.y, r0.y, c8.x
+    mov r1, c6
+    add r1, -r1, c5
+    mad r1, r0.y, r1, c6
+    add r2, -r1, c7
+    mad r0.y, r0.x, c9.x, c9.y
+    mul r0.x, r0.x, v3.x
+    mad o1, r0.y, r2, r1
+    mul r0.yzw, r0.x, c8.xxyx
+    mad r0.xyz, v2, r0.x, r0.yzww
     add r0.xyz, r0, v0
     mul r1, r0.y, c1
     mad r1, c0, r0.x, r1
     mad r0, c2, r0.z, r1
     mad o0, c3, v0.w, r0
+    mov o2.xy, v1
 
-// approximately 11 instruction slots used
+// approximately 20 instruction slots used

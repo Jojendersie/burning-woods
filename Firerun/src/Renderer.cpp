@@ -184,14 +184,6 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 
 	// universal Quad vb
 	m_pD3DDevice->CreateVertexBuffer(sizeof(BillboardVertex)*4, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, 0, D3DPOOL_DEFAULT, &m_pBillboardVB, NULL);
-	BillboardVertex* vertices;
-	m_pBillboardVB->Lock(0, sizeof(BillboardVertex)*4, (void**)&vertices, D3DLOCK_DISCARD);
-	vertices[0].texcoord = D3DXVECTOR2(0.0f, 0.0f);
-	vertices[1].texcoord = D3DXVECTOR2(1.0f, 0.0f);
-	vertices[2].texcoord = D3DXVECTOR2(1.0f, 1.0f);
-	vertices[3].texcoord = D3DXVECTOR2(0.0f, 1.0f);	// positions are updated framewise
-	m_pBillboardVB->Unlock();
-
 	m_pD3DDevice->CreateIndexBuffer(sizeof(WORD)*6, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &m_pBillboardIB, NULL);
 	WORD* indices;
 	m_pBillboardIB->Lock(0, sizeof(WORD)*6, (void**)&indices, D3DLOCK_DISCARD);
@@ -287,6 +279,10 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	vertices[1].position = +cameraX-cameraY;
 	vertices[2].position = +cameraX+cameraY;
 	vertices[3].position = -cameraX+cameraY;
+	vertices[0].texcoord = D3DXVECTOR2(0.0f, 0.0f);
+	vertices[1].texcoord = D3DXVECTOR2(1.0f, 0.0f);
+	vertices[2].texcoord = D3DXVECTOR2(1.0f, 1.0f);
+	vertices[3].texcoord = D3DXVECTOR2(0.0f, 1.0f);	// positions are updated framewise
 	m_pBillboardVB->Unlock();
 
 
@@ -462,7 +458,6 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 
 
 	m_pD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-	m_pD3DDevice->SetRenderState(D3DRS_ZENABLE, false);
 #pragma endregion
 
 #pragma region FIRE
@@ -473,7 +468,7 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 
 	m_pD3DDevice->SetFVF(0);
 	m_pD3DDevice->SetVertexDeclaration(Fire::pVertexDecl);
-	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
 	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	m_pD3DDevice->SetStreamSource(0, m_pBillboardVB, 0, sizeof(BillboardVertex));
@@ -484,8 +479,11 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	m_pD3DDevice->SetPixelShader(m_pFirePS);
 	m_pD3DDevice->SetVertexShader(m_pFireVS);
 
+	//Renderer::Get().m_pD3DDevice->SetTexture(0, TextureManager::Get().m_aNoiseTexture[0].m_pTex);
 	m_pD3DDevice->SetVertexShaderConstantF(4, &g_PassedTime, 1);
-	
+	m_pD3DDevice->SetVertexShaderConstantF(5, Fire::fireStartColor, 1);
+	m_pD3DDevice->SetVertexShaderConstantF(6, Fire::fireMidColor, 1);
+	m_pD3DDevice->SetVertexShaderConstantF(7, Fire::fireEndColor, 1);
 
 	fire->Draw(ViewMatrix, ViewProjectionMatrix, CameraPos);
 
@@ -494,11 +492,14 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	m_pD3DDevice->SetVertexDeclaration(nullptr);
 	m_pD3DDevice->SetFVF(QuadVertex::FVF);
 
+	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+
 //	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 #pragma endregion
 
 #pragma region HDR_TONEMAP
+	m_pD3DDevice->SetRenderState(D3DRS_ZENABLE, false);
 
 	// --------------------------------------------------------------------------------------
 	// HDR & Tonemapping

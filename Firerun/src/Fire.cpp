@@ -13,6 +13,10 @@ D3DDECL_END()
 
 IDirect3DVertexDeclaration9* Fire::pVertexDecl = NULL;
 
+const D3DXVECTOR4 Fire::fireStartColor = D3DXVECTOR4(0.75f, 0.0f, 0.0f, 1.0f);
+const D3DXVECTOR4 Fire::fireMidColor = D3DXVECTOR4(0.8f, 0.2f, 0.0f, 1.0f);
+const D3DXVECTOR4 Fire::fireEndColor = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
+
 const float Fire::directionStrengthMin = -4.0f;
 const float Fire::directionStrengthMaxSubMin = 8.0f;
 

@@ -7,14 +7,14 @@
 // Gewichtung der Farbkanäle für Luminance
 static const float3 ColorLuminanceWeight = float3(0.2125f, 0.7154f, 0.0721f);
 // Konstanten für Tonemapping
-static const float Exposure = 0.08f;
+static const float Exposure = 0.05f;
 
 // SampleOffsets fürs Downsampling
 float4 SampleOffsets[4];	// je 2 float2
 
 // Helligkeitslimiterung für BrightPass
-static const float BrightLimiter = 0.02f;
-static const float BloomScale = 1.15f;
+static const float BrightLimiter = 0.07f;
+static const float BloomScale = 1.2f;
 
 // Gaussian Blur
 	// Kernel Size 24, sigma 
@@ -32,10 +32,6 @@ static const float GaussianBlurWeights[13] =
  0.06837810f,
  0.07594664f,
  0.08088417f, 0.08260034f}; // mittelsample zum schluss, ansonsten von fern nach nah
-
-
-// Intensität des Blooms
-//static const float BloomScale = 1.25f;
 
 // Geschwindigkeit mit der die Luminance angepasst wird
 static const float LuminanceAdaptionSpeed = 10.0f;
