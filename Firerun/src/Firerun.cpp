@@ -101,12 +101,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		// start
 		QueryPerformanceCounter((LARGE_INTEGER*)(&StartTime));
 		
-			// light TEST
-		Renderer::Get().m_LightList[0].Active = true;
-		Renderer::Get().m_LightList[0].Position = D3DXVECTOR3(0,15,0);
-		Renderer::Get().m_LightList[0].Color = D3DXVECTOR3(2.0f + fabs(sinf(g_PassedTime*4))*0.5,1.0f + cosf(g_PassedTime*5)*0.1f, 0.01f);
-		Renderer::Get().m_LightList[0].RangeSq = 10000.0f + sinf(g_PassedTime*5)*3;
-
 		// windows messages
 		MSG Message;
 		while(PeekMessage(&Message, NULL, 0, 0, PM_REMOVE))

@@ -20,7 +20,7 @@ const float Fire::lifetimeMin = 0.3f;
 const float Fire::lifetimeMaxSubMin = 0.7f;
 
 
-Fire::Fire(const D3DXVECTOR3& position)
+Fire::Fire(const D3DXVECTOR3& position) : position(position)
 {
 	Renderer::Get().m_pD3DDevice->CreateVertexBuffer(NUM_PARTICLES_PER_FIRE * sizeof(Particle), 
 										D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &m_pFireVB, NULL);
@@ -37,7 +37,10 @@ Fire::Fire(const D3DXVECTOR3& position)
 	}
 	m_pFireVB->Unlock();
 
-	this->position = position;
+	// create light
+	lightIndex = Renderer::Get().GetFreeLightPosition();
+	Renderer::Get().m_LightList[lightIndex].Active = true;
+	Renderer::Get().m_LightList[lightIndex].Position = position;
 }
 
 Fire::~Fire(void)
@@ -47,6 +50,9 @@ Fire::~Fire(void)
 
 void Fire::Draw(const D3DXMATRIX& View, const D3DXMATRIX& ViewProjection, const D3DXVECTOR3& ViewPos)
 {
+	Renderer::Get().m_LightList[0].Color = D3DXVECTOR3(2.0f + fabs(sinf(g_PassedTime*4))*0.5, 1.0f + cosf(g_PassedTime*5)*0.1f, 0.02f);
+	Renderer::Get().m_LightList[0].RangeSq = 8000.0f + sinf(g_PassedTime*5)*5;
+
 	Renderer::Get().m_pD3DDevice->SetStreamSource(1, m_pFireVB, 0, sizeof(Particle));
     Renderer::Get().m_pD3DDevice->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1ul);
 	Renderer::Get().m_pD3DDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);

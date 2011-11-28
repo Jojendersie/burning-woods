@@ -14,8 +14,7 @@ public:
 	~Fire();
 
 	void Draw(const D3DXMATRIX& View, const D3DXMATRIX& ViewProjection, const D3DXVECTOR3& ViewPos);
-
-	D3DXVECTOR3 position;
+	
 	static const D3DVERTEXELEMENT9 FireVertexDeclElements[];
 	static IDirect3DVertexDeclaration9* pVertexDecl;	// created and destoryed by renderer
 
@@ -26,6 +25,9 @@ private:
 		float	lifetime;	// time of spawn in s
 		float	starttime;	// 0-1, a float value that gives a form of "liveoffset"
 	};
+
+	D3DXVECTOR3 position;
+	int lightIndex;
 
 	static const float directionStrengthMin;	// its per axis - using spherecordinates would be better
 	static const float directionStrengthMaxSubMin;

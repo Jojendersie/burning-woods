@@ -212,7 +212,7 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 Renderer::Renderer() :
 	m_DirectionalLightDirection(0.577f, 0.577f, 0.577f),	// 1, 1, 1 normalized
 	m_DirectionalLightDiffuseColor(0.6f, 0.6f, 0.64f),
-	m_AmbientColor(0.25f, 0.25f, 0.32f)
+	m_AmbientColor(0.2f, 0.2f, 0.24f)
 {
 }
 
@@ -412,9 +412,8 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	// point lights
 	m_pD3DDevice->SetPixelShader(m_pPointLightPS);
 	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-	m_pD3DDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR);
-	m_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_DESTCOLOR);
+	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+	m_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	for(unsigned int i=0; i<MAX_LIGHTS; ++i)
 	{
 		if(!m_LightList[i].Active)
@@ -474,7 +473,7 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 
 	m_pD3DDevice->SetFVF(0);
 	m_pD3DDevice->SetVertexDeclaration(Fire::pVertexDecl);
-	//m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	m_pD3DDevice->SetStreamSource(0, m_pBillboardVB, 0, sizeof(BillboardVertex));
