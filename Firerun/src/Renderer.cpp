@@ -484,6 +484,8 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	m_pD3DDevice->SetVertexShaderConstantF(5, Fire::fireStartColor, 1);
 	m_pD3DDevice->SetVertexShaderConstantF(6, Fire::fireMidColor, 1);
 	m_pD3DDevice->SetVertexShaderConstantF(7, Fire::fireEndColor, 1);
+	m_pD3DDevice->SetVertexShaderConstantF(8, &Fire::fireStartScale, 1);
+	m_pD3DDevice->SetVertexShaderConstantF(9, &Fire::fireEndScale, 1);
 
 	fire->Draw(ViewMatrix, ViewProjectionMatrix, CameraPos);
 

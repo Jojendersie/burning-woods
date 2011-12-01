@@ -22,6 +22,9 @@ public:
 	static const D3DXVECTOR4 fireMidColor;
 	static const D3DXVECTOR4 fireEndColor;
 
+	static const float fireStartScale;
+	static const float fireEndScale;
+
 private:
 	struct Particle
 	{

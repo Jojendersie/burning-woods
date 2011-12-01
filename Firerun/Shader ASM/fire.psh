@@ -14,17 +14,18 @@
 //
 
     ps_3_0
-    def c0, 2, -1, 1, 10
-    def c1, 0, 0, 0, 0
+    def c0, 2, -1, 1, 0.00999999978
+    def c1, 0.100000001, 0, 0, 0
     dcl_color v0
     dcl_texcoord v1.xy
     dcl_2d s0
     mul r0.xy, c0.w, v1
     texld r0, r0, s0
-    mul r0, r0, v0
+    mul r0, r0.x, v0
     mad r1.xy, v1, c0.x, c0.y
     dp2add r1.x, r1, -r1, c0.z
     mul r0, r0, r1.x
-    cmp oC0, r1.x, r0, c1.x
+    mul r0, r0, c1.x
+    cmp oC0, r1.x, r0, c1.y
 
-// approximately 8 instruction slots used (1 texture, 7 arithmetic)
+// approximately 9 instruction slots used (1 texture, 8 arithmetic)

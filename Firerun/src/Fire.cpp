@@ -13,15 +13,18 @@ D3DDECL_END()
 
 IDirect3DVertexDeclaration9* Fire::pVertexDecl = NULL;
 
-const D3DXVECTOR4 Fire::fireStartColor = D3DXVECTOR4(0.75f, 0.0f, 0.0f, 1.0f);
-const D3DXVECTOR4 Fire::fireMidColor = D3DXVECTOR4(0.8f, 0.2f, 0.0f, 1.0f);
+const D3DXVECTOR4 Fire::fireStartColor = D3DXVECTOR4(1.2f, 1.0f, 0.91f, 1.0f)*0.2f;
+const D3DXVECTOR4 Fire::fireMidColor = D3DXVECTOR4(1.2f, 0.6f, 0.22f, 1.0f)*0.4f;
 const D3DXVECTOR4 Fire::fireEndColor = D3DXVECTOR4(0.0f, 0.0f, 0.0f, 0.0f);
 
-const float Fire::directionStrengthMin = -4.0f;
-const float Fire::directionStrengthMaxSubMin = 8.0f;
+const float Fire::fireStartScale = 0.8f;
+const float Fire::fireEndScale = 0.4f;
 
-const float Fire::lifetimeMin = 0.3f;
-const float Fire::lifetimeMaxSubMin = 0.7f;
+const float Fire::directionStrengthMin = 0.3f;
+const float Fire::directionStrengthMaxSubMin = 2.5f;
+
+const float Fire::lifetimeMin = 0.7f;
+const float Fire::lifetimeMaxSubMin = 3.0f;
 
 
 Fire::Fire(const D3DXVECTOR3& position) : position(position)
@@ -33,11 +36,17 @@ Fire::Fire(const D3DXVECTOR3& position) : position(position)
 	m_pFireVB->Lock(0, sizeof(Particle)*NUM_PARTICLES_PER_FIRE, (void**)&pParticles, D3DLOCK_DISCARD);
 	for(int i=0; i<NUM_PARTICLES_PER_FIRE; ++i)
 	{
-		pParticles[i].startDirection.x = static_cast<float>(rand()) / RAND_MAX * directionStrengthMaxSubMin + directionStrengthMin;
-		pParticles[i].startDirection.y = static_cast<float>(rand()) / RAND_MAX * directionStrengthMaxSubMin + directionStrengthMin;
-		pParticles[i].startDirection.z = static_cast<float>(rand()) / RAND_MAX * directionStrengthMaxSubMin + directionStrengthMin;
+		float phi = static_cast<float>(rand()) / RAND_MAX * 2 * g_PI;
+		float theta = static_cast<float>(rand()) / RAND_MAX * 2 * g_PI;
+		float radius = static_cast<float>(rand()) / RAND_MAX * directionStrengthMaxSubMin + directionStrengthMin;
+		pParticles[i].startDirection.x = cosf(theta) * sinf(phi);
+		pParticles[i].startDirection.y = sinf(theta) * sinf(phi);
+		pParticles[i].startDirection.z = cosf(phi);
+		pParticles[i].startDirection *= radius;
+
 		pParticles[i].starttime = static_cast<float>(rand()) / RAND_MAX;
-		pParticles[i].lifetime = static_cast<float>(rand()) / RAND_MAX * lifetimeMaxSubMin + lifetimeMin;
+		// less y startdir is less lifetime
+		pParticles[i].lifetime = (static_cast<float>(rand()) / RAND_MAX * lifetimeMaxSubMin + lifetimeMin);
 	}
 	m_pFireVB->Unlock();
 
