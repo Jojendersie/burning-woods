@@ -37,15 +37,17 @@ Stone::Stone(const float _fa,
 	float fMinS = min(min(_fa,_fb),_fc);
 
 	// first cup - vertex
-	pVertexbuffer->x = 0.0f + TextureManager::Get().PerlinHeight(0.0f, 0.0f, 0, 4, nullptr);
-	pVertexbuffer->y = 0.0f;
-	pVertexbuffer->z = _fc;
+	pVertexbuffer->pos.x = 0.0f + TextureManager::Get().PerlinHeight(0.0f, 0.0f, 0, 4, nullptr);
+	pVertexbuffer->pos.y = 0.0f;
+	pVertexbuffer->pos.z = _fc;
 	pVertexbuffer->nx = 0.0f;
 	pVertexbuffer->ny = 0.0f;
 	pVertexbuffer->nz = 1.0f;
 	pVertexbuffer->u = 0.5f;
 	pVertexbuffer->v = 1.0f;
 	++pVertexbuffer;
+	
+	m_RadiusSq = -1.0f;
 
 	// first trianglefan
 	for(int u=0;u<StoneDetail-1;++u)
@@ -84,9 +86,12 @@ Stone::Stone(const float _fa,
 			float fRand = fMinS*fLen*rand()/100000.0f;
 
 			// Position aus Parameterform
-			pVertexbuffer->x = (0.05f+_fa) * ( OrSin_t * OrCos_u + nx*fRand);
-			pVertexbuffer->y = (0.05f+_fb) * ( OrSin_t * OrSin_u + ny*fRand);
-			pVertexbuffer->z = (0.05f+_fc) * ( OrCos_t + nz*fRand);
+			pVertexbuffer->pos.x = (0.05f+_fa) * ( OrSin_t * OrCos_u + nx*fRand);
+			pVertexbuffer->pos.y = (0.05f+_fb) * ( OrSin_t * OrSin_u + ny*fRand);
+			pVertexbuffer->pos.z = (0.05f+_fc) * ( OrCos_t + nz*fRand);
+
+			float l = D3DXVec3LengthSq(&pVertexbuffer->pos);
+			m_RadiusSq = max(m_RadiusSq, l);
 
 			// Add noise to normals too
 			// OPT: Andreas rand funktion
@@ -135,9 +140,9 @@ Stone::Stone(const float _fa,
 	}
 
 	// last closing point
-	pVertexbuffer->x = 0.0f;
-	pVertexbuffer->y = 0.0f;
-	pVertexbuffer->z = -_fc;
+	pVertexbuffer->pos.x = 0.0f;
+	pVertexbuffer->pos.y = 0.0f;
+	pVertexbuffer->pos.z = -_fc;
 	pVertexbuffer->nx = 0.0f;
 	pVertexbuffer->ny = 0.0f;
 	pVertexbuffer->nz = -1.0f;
@@ -185,9 +190,10 @@ StoneInstance::StoneInstance(const float _fx,
 {
 	// Static transformation with random rotation
 	D3DXMatrixRotationYawPitchRoll(&m_Transform, rand(), rand(), rand());
-	m_Transform._41 = _fx;
-	m_Transform._42 = _fy;
-	m_Transform._43 = _fz;
+	m_Position.x = m_Transform._41 = _fx;
+	m_Position.y = m_Transform._42 = _fy;
+	m_Position.z = m_Transform._43 = _fz;
+
 
 	float det = D3DXMatrixDeterminant(&m_Transform);
 	D3DXMatrixInverse(&m_TransformInv, &det, &m_Transform);

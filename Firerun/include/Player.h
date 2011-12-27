@@ -28,10 +28,14 @@ private:
 	POINT m_LastMousePos;
 	POINT m_MouseDelta;
 	static const float m_CameraRotSpeed;
+	static const float m_Height;
 	
 	// Movement
 	bool m_Forward;
 	bool m_Back;
-	static const float m_MovementSpeed;
+	static const float m_Accl;
+	static const float m_Friction;
+	static const float m_BackFactor;
+	float m_Speed;
 };
 

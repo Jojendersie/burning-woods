@@ -2,7 +2,7 @@
 // Vertexstruct for Stones etc.
 struct StdVertex
 {
-	float x,y,z;
+	D3DXVECTOR3 pos;
 	float nx,ny,nz;
 	float u,v;
 	static const DWORD FVF;
@@ -22,19 +22,20 @@ public:
 		const float _fc);
 	~Stone();
 
+	float m_RadiusSq;
+
 	void Render();
 };
 
 // **************************************************************************************************************************************************** //
 class StoneInstance
 {
-private:
-	Stone* m_pStone;
 	D3DXMATRIX m_Transform;
 	D3DXMATRIX m_TransformInv;
 public:
+	Stone* m_pStone;
+	D3DXVECTOR3 m_Position;
 	StoneInstance* m_pNextStone;
-	float m_fRadius;	// radius of collision
 
 	
 

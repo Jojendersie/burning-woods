@@ -51,6 +51,8 @@ public:
 	void DrawTerrain(const D3DXVECTOR3& _CameraPos, const D3DXVECTOR2& _CameraDir2D, const float _HorizontalFOV);
 	//void DrawSky();
 
+	bool TestCollision(const D3DXVECTOR3& playerPosition, D3DXVECTOR3* outNormal);
+
 	float GetTerrainHeightAt(const float X, const float Z);
 
 	static const unsigned short		m_TerrainGridSize;
