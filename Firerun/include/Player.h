@@ -1,6 +1,6 @@
 #pragma once
 
-// #define FREE_CAMERA
+#define FREE_CAMERA
 
 class Player
 {

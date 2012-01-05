@@ -100,7 +100,6 @@ private:
 
 	// Sky
 	IDirect3DPixelShader9*	m_pSkyPS;
-	IDirect3DVertexShader9*	m_pSkyVS;
 
 	// Stone
 	IDirect3DPixelShader9*	m_pStonePS;

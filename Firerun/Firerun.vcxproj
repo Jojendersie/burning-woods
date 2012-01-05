@@ -190,7 +190,6 @@
     <None Include="Shader ASM\fire.psh" />
     <None Include="Shader ASM\fire.vsh" />
     <None Include="Shader ASM\Sky.psh" />
-    <None Include="Shader ASM\Sky.vsh" />
     <None Include="Shader ASM\Stone.psh" />
     <None Include="Shader ASM\Stone.vsh" />
     <None Include="Shader HLSL\Deferred Light.hlsl" />

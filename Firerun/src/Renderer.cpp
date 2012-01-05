@@ -133,7 +133,6 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 
 		// Sky
 	m_pD3DDevice->CreatePixelShader(g_aSkyPS, &m_pSkyPS);
-	m_pD3DDevice->CreateVertexShader(g_aSkyVS, &m_pSkyVS);	
 
 		// Stone
 	m_pD3DDevice->CreatePixelShader(g_aStonePS, &m_pStonePS);
@@ -228,7 +227,6 @@ Renderer::~Renderer()
 	m_pTerrainPS->Release();
 	m_pTerrainVS->Release();
 	m_pSkyPS->Release();
-	m_pSkyVS->Release();
 	m_pStonePS->Release();
 	m_pStoneVS->Release();
 	m_pPointLightPS->Release();
@@ -353,6 +351,8 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	// --------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------
 
+	m_pD3DDevice->SetVertexShader(m_pViewRayQuadVS);
+
 #pragma region LIGHTING
 	// --------------------------------------------------------------------------------------
 	// Lighting Pass
@@ -453,6 +453,7 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	SetTextureAdressing(1, D3DTADDRESS_WRAP);
 	SetTextureFilter(0, D3DTEXF_LINEAR);
 	SetTextureFilter(1, D3DTEXF_LINEAR);
+//	m_pD3DDevice->SetVertexShader(m_pSkyVS);	// using also the quad with rays
 	m_pD3DDevice->SetPixelShader(m_pSkyPS);
 	m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_aQuad, sizeof(QuadVertex));
 
@@ -502,6 +503,7 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 
 #pragma region HDR_TONEMAP
 	m_pD3DDevice->SetRenderState(D3DRS_ZENABLE, false);
+	m_pD3DDevice->SetVertexShader(m_pViewRayQuadVS);
 
 	// --------------------------------------------------------------------------------------
 	// HDR & Tonemapping

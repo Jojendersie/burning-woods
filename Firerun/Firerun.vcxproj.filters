@@ -106,9 +106,6 @@
     <None Include="Shader ASM\Sky.psh">
       <Filter>Shader ASM</Filter>
     </None>
-    <None Include="Shader ASM\Sky.vsh">
-      <Filter>Shader ASM</Filter>
-    </None>
     <None Include="Shader ASM\DeferredPointLight.psh">
       <Filter>Shader ASM</Filter>
     </None>
