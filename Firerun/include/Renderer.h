@@ -64,6 +64,8 @@ private:
 	// DepthStencil
 	IDirect3DSurface9* m_pDepthStencilBuffer;
 
+	D3DXVECTOR2 m_BackBufferPixelSize;
+
 	// -----------------------------------
 	// Textures
 	// GBuffer
@@ -76,6 +78,9 @@ private:
 	Texture m_pOldLuminance;
 	Texture m_pLuminance[5];
 	Texture m_pBrightPass[2];
+
+	// backbuffer copy
+	Texture m_pPreBackBuffer;
 
 	// -----------------------------------
 	// Shader
@@ -100,6 +105,11 @@ private:
 
 	// Sky
 	IDirect3DPixelShader9*	m_pSkyPS;
+
+	// Radial Blur
+	IDirect3DPixelShader9*	m_pRadialBlurPS;
+	static const float m_RadialBlurStepVelocityFactor;
+	static const float m_RadialBlurWeightVelocityFactor;
 
 	// Stone
 	IDirect3DPixelShader9*	m_pStonePS;

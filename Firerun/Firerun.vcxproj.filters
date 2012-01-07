@@ -118,6 +118,12 @@
     <None Include="Shader ASM\fire.vsh">
       <Filter>Shader ASM</Filter>
     </None>
+    <None Include="Shader HLSL\RadialBlur.hlsl">
+      <Filter>Shader HLSL</Filter>
+    </None>
+    <None Include="Shader ASM\radialBlur.psh">
+      <Filter>Shader ASM</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shader ASM\terrain.vsh">

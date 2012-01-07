@@ -3,7 +3,7 @@
 #include "World.h"
 
 const float Player::m_CameraRotSpeed = 0.01f;
-const float Player::m_Accl = 5.0f;
+const float Player::m_Accl = 6.0f;
 const float Player::m_Height = 1.7f;
 const float Player::m_Friction = 0.01f;
 const float Player::m_BackFactor = -0.4f;

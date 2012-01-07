@@ -1,6 +1,6 @@
 #pragma once
 
-#define FREE_CAMERA
+//#define FREE_CAMERA
 
 class Player
 {
@@ -21,6 +21,7 @@ public:
 	D3DXMATRIX		m_ViewMatrix;
 	D3DXVECTOR3		m_CameraPosition;
 	D3DXVECTOR3		m_CameraDirection;
+	float m_Speed;
 private:
 	Player();
 
@@ -36,6 +37,5 @@ private:
 	static const float m_Accl;
 	static const float m_Friction;
 	static const float m_BackFactor;
-	float m_Speed;
 };
 

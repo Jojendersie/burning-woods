@@ -17,7 +17,10 @@
 // FOV
 const float Renderer::m_FOVMin = (62.0f/180.0f);
 const float Renderer::m_FOVMax = (87.0f/180.0f);
-const float Renderer::m_FOVVelocityFactor = 5.0f;
+const float Renderer::m_FOVVelocityFactor = 0.01f;
+
+const float Renderer::m_RadialBlurStepVelocityFactor = 0.2f;
+const float Renderer::m_RadialBlurWeightVelocityFactor = 1.8f;
 
 // **************************************************************************************************************************************************** //
 Renderer& Renderer::Get()
@@ -83,6 +86,9 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 	if(FAILED(m_pD3D->CreateDevice(Adapter, DeviceType, _WindowHandle, D3DCREATE_HARDWARE_VERTEXPROCESSING, &PresentParams, &m_pD3DDevice)))
 		return false;
 
+	m_BackBufferPixelSize.x = 1.0f / _ResolutionX;
+	m_BackBufferPixelSize.y = 1.0f / _ResolutionY;
+
 	// GetBackbuffer
 	m_pD3DDevice->GetRenderTarget(0, &m_pBackBuffer);
 
@@ -111,6 +117,8 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 	m_pBrightPass[0] = TextureManager::Get().CreateTexture(BrightPassX, BrightPassY, D3DFMT_A8R8G8B8);
 	m_pBrightPass[1] = TextureManager::Get().CreateTexture(BrightPassX, BrightPassY, D3DFMT_A8R8G8B8);
 
+	// backbuffer copy
+	m_pPreBackBuffer = TextureManager::Get().CreateTexture(_ResolutionX, _ResolutionY, D3DFMT_A8R8G8B8);
 
 	// Create Shader
 		// Terrain
@@ -133,6 +141,9 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 
 		// Sky
 	m_pD3DDevice->CreatePixelShader(g_aSkyPS, &m_pSkyPS);
+
+		// Radial Blur
+	m_pD3DDevice->CreatePixelShader(g_aradialBlurPS, &m_pRadialBlurPS);
 
 		// Stone
 	m_pD3DDevice->CreatePixelShader(g_aStonePS, &m_pStonePS);
@@ -157,8 +168,8 @@ bool Renderer::Initialize(const unsigned int _ResolutionX, const unsigned int _R
 	}
 
 	// Brightpass downsample
-	float OffsetX = 1.0f/_ResolutionX;
-	float OffsetY = 1.0f/_ResolutionY;
+	float OffsetX = m_BackBufferPixelSize.x;
+	float OffsetY = m_BackBufferPixelSize.y;
 	float OffsetsBrightpass[] = { 0,OffsetY,   0,-OffsetY,   OffsetX,0,   -OffsetX,0,    OffsetX,OffsetY,   -OffsetX,-OffsetY,    OffsetX,-OffsetY,    -OffsetX,OffsetY  };
 	memcpy(m_BrightPassSamplingOffsets, OffsetsBrightpass, sizeof(float)*16);
 
@@ -227,6 +238,7 @@ Renderer::~Renderer()
 	m_pTerrainPS->Release();
 	m_pTerrainVS->Release();
 	m_pSkyPS->Release();
+	m_pRadialBlurPS->Release();
 	m_pStonePS->Release();
 	m_pStoneVS->Release();
 	m_pPointLightPS->Release();
@@ -556,25 +568,36 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	m_pD3DDevice->SetTexture(0, m_pBrightPass[1].m_pTex);
 	m_pD3DDevice->SetPixelShaderConstantF(0, m_BrightPassBlurOffsets_Vertical[0], 12);
 	m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_aQuad, sizeof(QuadVertex));
-#pragma endregion
-
-	// --------------------------------------------------------------------------------------
-	// Final
+	
+	// combine
 #pragma region FINAL
 	// Realign screenquad
 	m_pBackBuffer->GetDesc(&Desc);
+
 	g_aQuad[1].x = Desc.Width - 0.5f;
 										g_aQuad[2].y = Desc.Height - 0.5f;
 	g_aQuad[3].x = Desc.Width - 0.5f;	g_aQuad[3].y = Desc.Height - 0.5f;
 
-	m_pD3DDevice->SetRenderTarget(0, m_pBackBuffer);
-
+	
+	m_pPreBackBuffer.SetAsTarget(0);
 	m_pD3DDevice->SetTexture(0, m_pHDRScreenBuffer.m_pTex);	
 	m_pD3DDevice->SetTexture(1, m_pLuminance[0].m_pTex);
 	m_pD3DDevice->SetTexture(2, m_pBrightPass[0].m_pTex);	SetTextureFilter(2, D3DTEXF_LINEAR);
 	m_pD3DDevice->SetPixelShader(m_pTonemappinFinishPS);
 	m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_aQuad, sizeof(QuadVertex));
 #pragma endregion 
+#pragma endregion
+
+#pragma region RADIAL_BLUR
+	m_pD3DDevice->SetRenderTarget(0, m_pBackBuffer);
+	m_pD3DDevice->SetTexture(0, m_pPreBackBuffer.m_pTex);
+	m_pD3DDevice->SetPixelShader(m_pRadialBlurPS);
+	m_pD3DDevice->SetPixelShaderConstantF(0, m_BackBufferPixelSize * PlayerVelocity * m_RadialBlurStepVelocityFactor, 1);
+	float weight = 1.0f / (PlayerVelocity + 0.0001f) * m_RadialBlurWeightVelocityFactor;
+	m_pD3DDevice->SetPixelShaderConstantF(1, &weight, 1);
+	m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_aQuad, sizeof(QuadVertex));
+#pragma endregion
+
 
 #ifdef TEXTURE_TEST
 	// Texturegen test - do not delete

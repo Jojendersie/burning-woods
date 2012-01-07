@@ -115,7 +115,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 
 		// Draw
-		if(!Renderer::Get().Draw(Player::Get().m_ViewMatrix, Player::Get().m_CameraPosition, Player::Get().m_CameraDirection, 1.0f))
+		if(!Renderer::Get().Draw(Player::Get().m_ViewMatrix, Player::Get().m_CameraPosition, Player::Get().m_CameraDirection, Player::Get().m_Speed))
 			Quit = true;
 
 		// End
