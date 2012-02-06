@@ -594,7 +594,11 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 	m_pD3DDevice->SetTexture(0, m_pPreBackBuffer.m_pTex);
 	m_pD3DDevice->SetPixelShader(m_pRadialBlurPS);
 	m_pD3DDevice->SetPixelShaderConstantF(0, m_BackBufferPixelSize * PlayerVelocity * m_RadialBlurStepVelocityFactor, 1);
-	float weight = 1.0f / (PlayerVelocity + 0.0001f) * m_RadialBlurWeightVelocityFactor;
+	float weight;
+	if(PlayerVelocity > 0.0f)
+		weight = 1.0f / (PlayerVelocity + 0.0001f) * m_RadialBlurWeightVelocityFactor;
+	else
+		weight = 0.0f;
 	m_pD3DDevice->SetPixelShaderConstantF(1, &weight, 1);
 	m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_aQuad, sizeof(QuadVertex));
 #pragma endregion
