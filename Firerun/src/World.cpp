@@ -21,6 +21,19 @@ const unsigned int World::m_NumTerrainPrimitives[] = { (World::m_TerrainGridSize
 
 const float World::m_BucketSize = 128.0f;
 
+// Definitionen verschidener Bauminstancen
+// Daten: fShotPropability, fShotDamping, iApexShotNumber, fShotLength, iNumChildShots, fRandom, iMaxBoneNumber, fApexRotation, fApexShotAngle, fShotAngle, fBranchFlattening, fGrowthRate, fHardness, fThicknessProportion, fLeafSize, iTexIndex, fAge, uiRndSeed, uiTextureMultiplicator
+const TreeGen Trees[World::NUM_TREE_TYPES] =
+		{{0.75f,			0.9f,		  1,			   0.4f,		3,				0.2f,	 6528,			 1.0f,			0.05f,			0.7f,		0.2f,			   0.75f,		2.0f,	   1.02f,				  0.3f,		0,		   30.0f,1,		 1},
+		 {0.8f,				0.9f,		  2,			   0.2f,		2,				0.1f,	 1100,			 0.9f,			0.3f,			0.6f,		0.2f,			   0.7f,		4.0f,	   1.05f,				  0.3f,		0,		   25.0f,1,		 1},
+		 {0.6f,				0.7f,		  4,			   0.3f,		2,				0.4f,	 2822,			 1.3f,			0.1f,			0.4f,		0.9f,			   0.51f,		4.0f,	   1.03f,				  0.3f,		0,		   50.0f,1,		 1},
+		 {0.5f,				0.9f,		  3,			   0.6f,		2,				0.2f,	 2520,			 0.7f,			0.2f,			0.7f,		0.0f,			   0.8f,		0.2f,	   1.03f,				  0.3f,		1,		   40.0f,1,		 1},	// Birke
+		 {0.9f,				0.9f,		  2,			   0.6f,		2,				0.2f,	 2864,			 0.7f,			0.2f,			0.7f,		0.0f,			   0.7f,		0.2f,	   1.03f,				  0.3f,		1,		   30.0f,1,		 1},	// Birke
+		 {0.8f,				0.5f,		  1,			   0.5f,		6,				0.1f,	 2887,			 1.1f,			0.05f,			0.5f,		0.7f,			   0.5f,		3.0f,	   1.01f,				  0.3f,		2,		   20.0f,2,		 1},	// Tanne
+		 {0.8f,				0.4f,		  1,			   0.5f,		6,				0.1f,	 9468,			 1.1f,			0.05f,			0.5f,		0.7f,			   0.5f,		3.0f,	   1.00f,				  0.3f,		2,		   40.0f,3,		 1},	// Tanne
+		 {0.9f,				0.7f,		  1,			   0.3f,		7,				0.3f,	 1355,			 0.6f,			0.4f,			0.6f,		0.1f,			   0.4f,		3.0f,	   0.93f,				  0.3f,		0,		   10.0f,1,		 1}		// Strauch
+		 };
+
 // **************************************************************************************************************************************************** //
 World& World::Get()
 {
@@ -120,6 +133,12 @@ bool World::Initialize()
 	{
 		float fBaseSize = rand()*0.5f/32767.0f+0.4f;
 		m_apStones[i] = new Stone(fBaseSize+rand()/32767.0f, fBaseSize+rand()/32767.0f, fBaseSize+rand()/32767.0f);
+	}
+
+	for(int i=0;i<NUM_TREE_TYPES;++i)
+	{
+		m_apTrees[i] = new Tree();
+		m_apTrees[i]->Load(&Trees[i]);
 	}
 
 	m_BucketOffsetX = 0;
@@ -225,34 +244,62 @@ void Bucket::ClearStones()
 	}
 }
 
+void Bucket::ClearTrees()
+{
+	// Lösche Tree-Instanzen, wenn sie keiner kennt ansonsten markiere sie als zu Löschen
+	// und Lösche zumindest diese Referenz.
+	while(m_pTreeInstances)
+	{
+		TreeInstance* pTemp = m_pTreeInstances;
+		m_pTreeInstances = m_pTreeInstances->m_pNextTree;
+		pTemp->m_Flags |= TreeInstance::DELETE_REQUEST;
+		pTemp->DecRef();
+	}
+	assert(m_pTreeInstances==nullptr);
+}
+
 Bucket::~Bucket()
 {
 	ClearStones();
+	ClearTrees();
 }
 
+// **************************************************************************************************************************************************** //
 void Bucket::Simulate()
 {
-	// traverse list of all trees:
-	// - if delete request than delete now
-	// - if starting burn readd tree into list of burning trees
-	TreeNode* pCurrent = m_pTreeInstances;
-	TreeNode* pLast = nullptr;
+	TreeInstance* pCurrent = m_pTreeInstances;
 	while(pCurrent)
 	{
-		if(pCurrent->pTree->m_Flags & DELETE_REQUEST)
+		// Brennphase: übertrage Energie auf alle umliegenden Bäume.
+		if(pCurrent->m_Flags & TreeInstance::BUNRING)
 		{
-			TreeNode* pNext = pCurrent->pNext;
-			if(pLast) pLast->pNext = pNext;
-			else m_pTreeInstances = pNext;
-			delete pCurrent->pNext;
-			delete pCurrent;
-			pCurrent = pNext;
+			for(int i=0;i<TreeInstance::NUM_AFFECTED_NEIGHBOURS;++i)
+				if(pCurrent->m_apAffectedNeighbours[i])
+			{
+				// Wenn Nachbar gelöscht werden soll (abgebrannt/außerhalb der Sichtweite)
+				if(pCurrent->m_apAffectedNeighbours[i]->m_Flags & TreeInstance::DELETE_REQUEST)
+				{
+					pCurrent->m_apAffectedNeighbours[i]->DecRef();
+					pCurrent->m_apAffectedNeighbours[i] = nullptr;
+				} else
+				{
+					// Berechne Schaden an anderen Energiefluss
+
+					// Wenn Grenzwert erreicht finde alle Nachbarn zu dem neu entzündeten Baum.
+					// Markiere als brennend
+				}
+			}
+
+			// Berechne Schaden durch eigenen Brand
+
+			// Wenn negative Lebensenergie markiere als abgebrannt.
 		}
 
-		pCurrent = pCurrent->pNext;
+		pCurrent = pCurrent->m_pNextTree;
 	}
 }
 
+// **************************************************************************************************************************************************** //
 void Bucket::Render(const D3DXMATRIX& View, const D3DXMATRIX& ViewProjection, const D3DXVECTOR3& ViewPos)
 {
 	// TODO: Culling
@@ -265,11 +312,11 @@ void Bucket::Render(const D3DXMATRIX& View, const D3DXMATRIX& ViewProjection, co
 	}
 
 	// render all trees
-	TreeNode* pCurTree=m_pTreeInstances;
+	TreeInstance* pCurTree=m_pTreeInstances;
 	while(pCurTree)
 	{
-		pCurTree->pTree->Render();
-		pCurTree = pCurTree->pNext;
+		pCurTree->Render(View, ViewProjection, ViewPos);
+		pCurTree = pCurTree->m_pNextTree;
 	}
 };
 
@@ -306,7 +353,7 @@ void World::Reload()
 		int isgn = DeltaX-m_BucketOffsetX;
 		isgn = isgn/abs(isgn);
 		// left or right columne
-		int ColX = ((m_BucketOffsetX+min(0,isgn)) % m_NumBuckets + m_NumBuckets) % m_NumBuckets;
+		int ColX = ((m_BucketOffsetX+std::min(0,isgn)) % m_NumBuckets + m_NumBuckets) % m_NumBuckets;
 		// Every bucket have to be cleared first.
 		// Refilling with code on top in the next frame.
 		for(int Z=0;Z<m_NumBuckets;Z++)
@@ -314,6 +361,7 @@ void World::Reload()
 			// renew Position
 			m_Buckets[ColX][Z].m_x += isgn*m_NumBuckets*m_BucketSize;//= (DeltaX-m_NumBuckets/2.0f)*m_BucketSize;
 			m_Buckets[ColX][Z].ClearStones();
+			m_Buckets[ColX][Z].ClearTrees();
 			m_Buckets[ColX][Z].m_bDirty = true;	// OPT: Dirty nach ClearStones verschieben?
 			// Set delete request for trees. They will be unloaded
 			// automaticly after doing this. Delete request is also
@@ -330,17 +378,19 @@ void World::Reload()
 	{
 		int isgn = DeltaZ-m_BucketOffsetZ;
 		isgn = isgn/abs(isgn);
-		int RowZ = ((m_BucketOffsetZ+min(0,isgn)) % m_NumBuckets + m_NumBuckets) % m_NumBuckets;
+		int RowZ = ((m_BucketOffsetZ+std::min(0,isgn)) % m_NumBuckets + m_NumBuckets) % m_NumBuckets;
 		for(int X=0;X<m_NumBuckets;X++)
 		{
 			m_Buckets[X][RowZ].m_z += isgn*m_NumBuckets*m_BucketSize;
 			m_Buckets[X][RowZ].ClearStones();
+			m_Buckets[X][RowZ].ClearTrees();
 			m_Buckets[X][RowZ].m_bDirty = true;	// OPT: Dirty nach ClearStones verschieben?
 		}
 		m_BucketOffsetZ+=isgn;
 	}
 }
 
+// TODO getRandomPos -> Vec3 auslagern
 void World::Fill(Bucket* _pBucket)
 {
 	// Random number of stone instanzes
@@ -360,9 +410,25 @@ void World::Fill(Bucket* _pBucket)
 		_pBucket->m_pStones = pNew;
 	}
 
+	// Trees should be normaly distributed
+	int iNumTrees = NUM_TREES_PER_BUCKET+rand()%(NUM_TREES_PER_BUCKET+1)+rand()%(NUM_TREES_PER_BUCKET+1);
+	for(int i=0;i<iNumTrees;++i)
+	{
+		// Randompos im Bucket
+		float fx = _pBucket->m_x+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
+		float fz = _pBucket->m_z+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
+		TreeInstance* pNew = new TreeInstance(fx,
+			GetTerrainHeightAt(fx,fz),
+			fz,
+			m_apTrees[rand()%NUM_TREE_TYPES]);
+		pNew->m_pNextTree = _pBucket->m_pTreeInstances;
+		_pBucket->m_pTreeInstances = pNew;
+	}
+
 	_pBucket->m_bDirty = false;
 }
 
+// **************************************************************************************************************************************************** //
 bool World::TestCollision(const D3DXVECTOR3& playerPosition, D3DXVECTOR3* outNormal)
 {
 	// simplex!

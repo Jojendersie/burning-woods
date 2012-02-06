@@ -34,7 +34,7 @@ Stone::Stone(const float _fa,
 	m_pIndexBuffer->Lock(0, 0, (void**)&pIndexbuffer, 0);
 
 	// Minimum size for noise-amplitude
-	float fMinS = min(min(_fa,_fb),_fc);
+	float fMinS = std::min(std::min(_fa,_fb),_fc);
 
 	// first cup - vertex
 	pVertexbuffer->pos.x = 0.0f + TextureManager::Get().PerlinHeight(0.0f, 0.0f, 0, 4, nullptr);
@@ -91,7 +91,7 @@ Stone::Stone(const float _fa,
 			pVertexbuffer->pos.z = (0.05f+_fc) * ( OrCos_t + nz*fRand);
 
 			float l = D3DXVec3LengthSq(&pVertexbuffer->pos);
-			m_RadiusSq = max(m_RadiusSq, l);
+			m_RadiusSq = std::max(m_RadiusSq, l);
 
 			// Add noise to normals too
 			// OPT: Andreas rand funktion
@@ -133,7 +133,7 @@ Stone::Stone(const float _fa,
 				(*(pIndexbuffer++)) = wIndex;
 
 				(*(pIndexbuffer++)) = u+StoneDetail*(t-1);
-				(*(pIndexbuffer++)) = min(u+StoneDetail*t,StoneNumVertices-1);
+				(*(pIndexbuffer++)) = std::min(u+StoneDetail*t,StoneNumVertices-1);
 				(*(pIndexbuffer++)) = wIndex;
 			}
 		}
@@ -195,8 +195,8 @@ StoneInstance::StoneInstance(const float _fx,
 	m_Position.z = m_Transform._43 = _fz;
 
 
-	float det = D3DXMatrixDeterminant(&m_Transform);
-	D3DXMatrixInverse(&m_TransformInv, &det, &m_Transform);
+//	float det = D3DXMatrixDeterminant(&m_Transform); ??? D3DXMatrixInverse calc this itself
+	D3DXMatrixInverse(&m_TransformInv, nullptr, &m_Transform);
 
 	m_pStone = _pStone;
 }
@@ -205,6 +205,7 @@ void StoneInstance::Render(const D3DXMATRIX& View, const D3DXMATRIX& ViewProject
 {
 	Renderer::Get().m_pD3DDevice->SetVertexShaderConstantF(0, m_Transform * ViewProjection, 4);
 	Renderer::Get().m_pD3DDevice->SetVertexShaderConstantF(4, m_Transform * View, 4);
+	// Objectspace Kameraposition - Entfernungsberechnung im defferred renderer
 	D3DXVECTOR3 temp;
 	Renderer::Get().m_pD3DDevice->SetVertexShaderConstantF(7, *D3DXVec3TransformCoord(&temp, &ViewPos, &m_TransformInv), 1);
 	

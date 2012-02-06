@@ -138,6 +138,8 @@
     <ClCompile Include="src\Stone.cpp" />
     <ClCompile Include="src\Texturemanager.cpp" />
     <ClCompile Include="src\Tree.cpp" />
+    <ClCompile Include="src\TreeGenerator.cpp" />
+    <ClCompile Include="src\TreeTriangulation.cpp" />
     <ClCompile Include="src\World.cpp" />
   </ItemGroup>
   <ItemGroup>

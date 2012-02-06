@@ -21,10 +21,17 @@
 
 // Mathematics
 #include <math.h>
+#undef min
+#undef max
+// For the min function
+#include <algorithm>
+
 
 // There's only a macro for PI in math.h (M_PI)
 const float g_PI = 3.141592653589f;
+const float g_2_PI = 6.283185307f;
 const float g_PI_4 = 0.785398163397f;
+const float g_MaxRndInv = 0.00003051850948f;
 
 // some useful globals
 extern float g_PassedTime;

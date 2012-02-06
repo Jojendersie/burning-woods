@@ -1,5 +1,6 @@
 // Predeklarationen für die Verwaltung
 class TreeInstance;
+class Tree;
 class StoneInstance;
 class Stone;
 struct TreeNode;
@@ -24,7 +25,7 @@ class Bucket
 private:
 public:
 	StoneInstance* m_pStones;
-	TreeNode* m_pTreeInstances;
+	TreeInstance* m_pTreeInstances;
 
 	bool m_bDirty;
 	float m_x;
@@ -33,6 +34,7 @@ public:
 	void Render(const D3DXMATRIX& View, const D3DXMATRIX& ViewProjection, const D3DXVECTOR3& ViewPos);
 	void Simulate();
 	void ClearStones();
+	void ClearTrees();
 
 	~Bucket();
 };
@@ -59,7 +61,9 @@ public:
 	static const unsigned short		m_HalfTerrainGridSize;
 	static const unsigned short		m_NumStones = 10;
 	static const unsigned short		m_NumBuckets = 9;
+	static const unsigned short		NUM_TREE_TYPES = 8;		// Bäume aller typen (statische Auswahl?)
 	static const float				m_BucketSize;
+	static const int				NUM_TREES_PER_BUCKET = 15;	// 1 erzeugt ca 1 bis 3 Bäume, 2 dann 2 bis 6, ...
 
 	Bucket m_Buckets[m_NumBuckets][m_NumBuckets];
 
@@ -85,10 +89,11 @@ private:
 	//static const unsigned int		m_NumStars;
 	//IDirect3DVertexBuffer9*			m_pSkys_VB;
 
-	// Managmanet aller Objekte
+	// Management aller Objekte
 
 	// Generierte Instanzen
 	Stone* m_apStones[m_NumStones];
+	Tree* m_apTrees[NUM_TREE_TYPES];
 
 	// geladene Weltposition und Verschiebung im Array
 	int m_BucketOffsetX;

@@ -313,7 +313,8 @@ bool Renderer::Draw(const D3DXMATRIX& ViewMatrix, const D3DXVECTOR3& CameraPos, 
 
 	
 #pragma region STONES
-	// Stones
+	// Stones and trees
+	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	SetTextureFilter(0, D3DTEXF_LINEAR);
 	SetTextureAdressing(0, D3DTADDRESS_WRAP);
 	m_pD3DDevice->SetVertexShader(m_pStoneVS);

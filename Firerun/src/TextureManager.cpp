@@ -88,6 +88,21 @@ const GeneratorGEN MapleGEN = {BARK_TEXTURE_SIZE,BARK_TEXTURE_SIZE,
 	27.3f, 11.0f						// Greater-case Blue
 };
 
+// Bark - Fir
+const GeneratorGEN FirGEN = {BARK_TEXTURE_SIZE,BARK_TEXTURE_SIZE,
+	4.0f, 1.0f, 3, 7, true,				// Noise1
+	2.0f, 1.0f, 4, 6, true,				// Noise2
+	-0.2f,// -0.2f, -0.2f,				// Zero-crossing test
+	1.0f, -1.0f, 0.4f,					// Less-case Basicnoise
+	25.0f, 16.0f,						// Less-case Red
+	30.0f, 17.0f,						// Less-case Green
+	15.0f, 12.0f,						// Less-case Blue
+	-1.0f, 1.0f, 0.6f,					// Greater-case Basicnoise
+	55.0f, 27.0f,						// Greater-case Red
+	53.0f, 26.0f,						// Greater-case Green
+	27.3f, 11.0f						// Greater-case Blue
+};
+
 // Terrain - GrayBrownStoneGEN
 const GeneratorGEN GrayBrownStoneGEN = {GROUND_TEXTURE_SIZE,GROUND_TEXTURE_SIZE,
 	1.0f, 1.0f, 3, 7, false,			// Noise1
@@ -170,6 +185,7 @@ bool TextureManager::Initialize()
 	//GenerateBarkTexture_Maple();
 	GenerateArbitaryTexture(&m_aBarkTextures[0].m_pTex, &MapleGEN);
 	GenerateArbitaryTexture(&m_aBarkTextures[1].m_pTex, &BirchGEN);
+	GenerateArbitaryTexture(&m_aBarkTextures[2].m_pTex, &FirGEN);
 
 	GenerateLeafTexture();
 
@@ -403,7 +419,7 @@ void TextureManager::GenerateLeafTexture()
 		x -= LEAF_TEXTURE_SIZE>>1;
 		y -= LEAF_TEXTURE_SIZE>>1;
 		Noise2 += Noise1;
-		Noise2 /= max(2.0f,(x*x+y*y)*0.0005f);
+		Noise2 /= std::max(2.0f,(x*x+y*y)*0.0005f);
 		Noise1 *= 0.5f;
 		// Red
 		pBuffer[i+2] = (unsigned char)(/*(Noise2>-0.2f)?0.0f:*/60.0f+50.0f*Noise1);
