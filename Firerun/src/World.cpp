@@ -400,8 +400,8 @@ void World::Fill(Bucket* _pBucket)
 	for(int i=0;i<iNumStones;++i)
 	{
 		// Randompos im Bucket
-		float fx = _pBucket->m_x+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
-		float fz = _pBucket->m_z+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
+		float fx = _pBucket->m_x+(rand()/32767.0f-0.5f)*m_BucketSize;
+		float fz = _pBucket->m_z+(rand()/32767.0f-0.5f)*m_BucketSize;
 		StoneInstance* pNew = new StoneInstance(fx,
 			GetTerrainHeightAt(fx,fz),
 			fz,
@@ -415,10 +415,10 @@ void World::Fill(Bucket* _pBucket)
 	for(int i=0;i<iNumTrees;++i)
 	{
 		// Randompos im Bucket
-		float fx = _pBucket->m_x+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
-		float fz = _pBucket->m_z+rand()*m_BucketSize/32767.0f-m_BucketSize*0.5f/32767.0f;
+		float fx = _pBucket->m_x+(rand()/32767.0f-0.5f)*m_BucketSize;
+		float fz = _pBucket->m_z+(rand()/32767.0f-0.5f)*m_BucketSize;
 		TreeInstance* pNew = new TreeInstance(fx,
-			GetTerrainHeightAt(fx,fz),
+			GetTerrainHeightAt(fx,fz)-1.0f,
 			fz,
 			m_apTrees[rand()%NUM_TREE_TYPES]);
 		pNew->m_pNextTree = _pBucket->m_pTreeInstances;
@@ -432,30 +432,40 @@ void World::Fill(Bucket* _pBucket)
 bool World::TestCollision(const D3DXVECTOR3& playerPosition, D3DXVECTOR3* outNormal)
 {
 	// simplex!
-	float playerBucketX = playerPosition.x + m_BucketSize/2;
-	float playerBucketZ = playerPosition.y + m_BucketSize/2;
+	//int playerBucketX = (-int(playerPosition.y/m_BucketSize+0.5f) + m_BucketOffsetX + m_NumBuckets/2) % m_NumBuckets;
+	//int playerBucketZ = (-int(playerPosition.x/m_BucketSize+0.5f) + m_BucketOffsetZ + m_NumBuckets/2) % m_NumBuckets;
+	int playerBucketX = ((int(std::ceil(playerPosition.x/m_BucketSize)) + m_NumBuckets/2 ) % m_NumBuckets + m_NumBuckets)%m_NumBuckets;
+	int playerBucketZ = ((int(std::ceil(playerPosition.z/m_BucketSize)) + m_NumBuckets/2 ) % m_NumBuckets + m_NumBuckets)%m_NumBuckets;
 	for(int bucketX=0; bucketX < m_NumBuckets; ++bucketX)
 	{
 		for(int bucketY=0; bucketY < m_NumBuckets; ++bucketY)
 		{
 			Bucket& bucket = m_Buckets[bucketX][bucketY];
-			/*if(bucket.m_x > playerBucketX &&
-				bucket.m_x+m_BucketSize < playerBucketX &&
-				bucket.m_z > playerBucketZ &&
-				bucket.m_z+m_BucketSize < playerBucketZ)*/
+
+			StoneInstance* pCurStone = bucket.m_pStones;
+			while(pCurStone)
 			{
-				StoneInstance* pCurStone = bucket.m_pStones;
-				while(pCurStone)
+				float x = pCurStone->m_Position.x - playerPosition.x;
+				float z = pCurStone->m_Position.z - playerPosition.z;
+				if((x*x+z*z) < pCurStone->m_pStone->m_RadiusSq)
 				{
-					float x = pCurStone->m_Position.x - playerPosition.x;
-					float z = pCurStone->m_Position.z - playerPosition.z;
-					if((x*x+z*z) < pCurStone->m_pStone->m_RadiusSq)
-					{
-						D3DXVec3Normalize(outNormal, &D3DXVECTOR3(x, 0, z));
-						return true;
-					}
-					pCurStone = pCurStone->m_pNextStone;
+					D3DXVec3Normalize(outNormal, &D3DXVECTOR3(x, 0, z));
+					return true;
 				}
+				pCurStone = pCurStone->m_pNextStone;
+			}
+
+			TreeInstance* pCurTree = bucket.m_pTreeInstances;
+			while(pCurTree)
+			{
+				float x = pCurTree->m_vPosition.x - playerPosition.x;
+				float z = pCurTree->m_vPosition.z - playerPosition.z;
+				if((x*x+z*z) < 0.4f)
+				{
+					D3DXVec3Normalize(outNormal, &D3DXVECTOR3(x, 0, z));
+					return true;
+				}
+				pCurTree = pCurTree->m_pNextTree;
 			}
 		}
 	}

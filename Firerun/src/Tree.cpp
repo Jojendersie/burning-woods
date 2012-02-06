@@ -13,7 +13,7 @@ TreeInstance::TreeInstance(const float _fx,
 	//D3DXMatrixScaling(&m_Transform, 100.0f, 100.0f, 100.0f);
 	m_vPosition.x = m_Transform._41 = _fx;
 	m_vPosition.y = m_Transform._42 = _fy;
-	m_vPosition.z = m_Transform._43 = _fz-3.0f;
+	m_vPosition.z = m_Transform._43 = _fz;
 
 	m_Flags = 0;
 	memset(m_apAffectedNeighbours, 0, sizeof(m_apAffectedNeighbours));
